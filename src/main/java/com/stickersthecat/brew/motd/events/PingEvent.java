@@ -28,11 +28,11 @@ public class PingEvent implements Listener {
         // make sure MOTD exists
         if (this.Plugin.Config.contains("motd")) {
 
-            this.DoMOTD(Event);
+            this.MOTD(Event);
         }
     }
 
-    public void DoMOTD(ServerListPingEvent Event) {
+    public void MOTD(ServerListPingEvent Event) {
 
         String MOTD = "";
 
@@ -140,7 +140,7 @@ public class PingEvent implements Listener {
 
             MOTD.append(Value + (I == 0 ? "\n" : ""));
             I++;
-            
+
             // dont allow more then 2 lines cause... well ya
             if (I > 1)
                 break;
