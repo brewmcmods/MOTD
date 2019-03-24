@@ -44,7 +44,10 @@ public class PingEvent implements Listener {
         switch (this.Plugin.Config.getString("motd.mode")) {
 
         case "random":
-            MOTD = this.SelectMOTD();
+            if (!this.Plugin.Config.contains("motd.random")) {
+
+                MOTD = this.SelectMOTD();
+            }
             break;
 
         case "static":
@@ -58,13 +61,13 @@ public class PingEvent implements Listener {
         }
 
         // if fail use static
-        if( MOTD == "" && this.Plugin.Config.contains("motd.static") ) {
+        if (MOTD == "" && this.Plugin.Config.contains("motd.static")) {
 
             MOTD = this.BuildMOTD(this.Plugin.Config.getStringList("motd.static"));
         }
 
         // check it again and if this fails allow it to default to the server prop one
-        if (MOTD != "" ) {
+        if (MOTD != "") {
 
             Event.setMotd(MOTD);
         }
@@ -72,17 +75,15 @@ public class PingEvent implements Listener {
 
     public String SelectMOTD() {
 
-        Set<String> Set = this.Plugin.Config.getConfigurationSection("motd").getKeys(false);
-        Set.remove("mode");
-        Set.remove("static");
-
+        Set<String> Set = this.Plugin.Config.getConfigurationSection("motd.random").getKeys(false);
         String[] Arr = Set.toArray(new String[Set.size()]);
+
         int Random = new Random().nextInt(Arr.length);
 
         String MOTD = "";
-        if (this.Plugin.Config.contains("motd." + Arr[Random])) {
+        if (this.Plugin.Config.contains("motd.random." + Arr[Random])) {
 
-            MOTD = this.BuildMOTD(this.Plugin.Config.getStringList("motd." + Arr[Random]));
+            MOTD = this.BuildMOTD(this.Plugin.Config.getStringList("motd.random." + Arr[Random]));
         }
         return MOTD;
     }
