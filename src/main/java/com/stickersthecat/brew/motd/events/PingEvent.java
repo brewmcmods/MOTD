@@ -10,9 +10,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.server.ServerListPingEvent;
 
-/**
- * @TODO: Time of day MOTD
- */
 public class PingEvent implements Listener {
 
     private Main Plugin;
@@ -26,10 +23,8 @@ public class PingEvent implements Listener {
     public void OnPing(ServerListPingEvent Event) {
 
         // make sure MOTD exists
-        if (this.Plugin.Config.contains("motd")) {
-
+        if (this.Plugin.Config.contains("motd")) 
             this.MOTD(Event);
-        }
     }
 
     public void MOTD(ServerListPingEvent Event) {
@@ -53,18 +48,18 @@ public class PingEvent implements Listener {
         }
 
         // if fail use static
-        if (MOTD == "" && this.Plugin.Config.contains("motd.static")) {
-
+        if (MOTD == "" && this.Plugin.Config.contains("motd.static"))
             MOTD = this.BuildMOTD(this.Plugin.Config.getStringList("motd.static"));
-        }
+
 
         // check it again and if this fails allow it to default to the server prop one
-        if (MOTD != "") {
-
+        if (MOTD != "")
             Event.setMotd(MOTD);
-        }
     }
 
+    /**
+     * Root Level Static MOTD
+     */
     private String StaticMOTD() {
 
         return this.StaticKey("motd.static");
