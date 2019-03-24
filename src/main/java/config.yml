@@ -1,10 +1,10 @@
 motd:
-  mode: random # modes: random, static, earthtime
+  mode: earthtime # modes: random, static, earthtime
   static: # this is a static / default MOTD, this wont show up unless mode is static or there is an error with one of the other ones
     - this is a static
     - option for MOTD
   random: # the group for the random motd msgs
-    rnd1: 
+    rnd1:
       - Hi Im this servers
       - MOTD
     rnd2:
@@ -17,21 +17,22 @@ motd:
       - §a§nand§r §b§msome§r §9§lbold
   earthtime: # this is based on server timezone (NOT WORLD)
     default: random # if all times keys are passed and none meet the current time, fall back to static or random motds, defined above
-    frame:
+    frames:
       time1:
         mode: static # static is a single motd for this time frame
         from: "00:00"
-        to: "11:59"
+        till: "11:59"
         static:
           - its currenly between 12am and 12pm
-          - hope you have a good morning!
+          - hope you have a good {EARTH_TIME}!
       time2:
         mode: random
         from: "12:00"
-        to: "23:59"
+        till: "23:59"
         rnadom:
           rnd1:
             - its currently between 12pm and 12am!
+            - Server time is {EARTH_TIME}
           rnd2:
             - ""
             - hope you have a good afternoon!
