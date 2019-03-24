@@ -1,13 +1,16 @@
 motd:
-  mode: random #modes: random, static
-  static: 
+  mode: random # modes: random, static
+  static: # this is a static MOTD, wont show up if random mode is selected
     - this is a static
     - option for MOTD
-  rnd1:
+  rnd1: #any value after static is classed as part of the random system, name doesnt matter, just has to look like these demos
     - Hi Im this servers
     - MOTD
   rnd2:
     - so am i
-  rnd3:
-    - 
-    - and me aswell!
+  emptytop: # use "" on the top line if you only want the second line
+    - ""
+    - and i!
+  colour: # this is a colour show off, see http://minecraft.tools/en/color-code.php always put colour before text styles
+    - §eNow with more yellow
+    - §a§nand§r §b§msome§r §9§lbold
