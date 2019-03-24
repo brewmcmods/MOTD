@@ -1,0 +1,1 @@
+package com.stickersthecat.stickerstools.motd.events;
