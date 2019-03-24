@@ -57,7 +57,14 @@ public class PingEvent implements Listener {
             break;
         }
 
-        if (MOTD != "") {
+        // if fail use static
+        if( MOTD == "" && this.Plugin.Config.contains("motd.static") ) {
+
+            MOTD = this.BuildMOTD(this.Plugin.Config.getStringList("motd.static"));
+        }
+
+        // check it again and if this fails allow it to default to the server prop one
+        if (MOTD != "" ) {
 
             Event.setMotd(MOTD);
         }
