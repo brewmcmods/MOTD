@@ -2,6 +2,7 @@ package com.stickersthecat.brew.motd.events;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.ZonedDateTime;
 import java.util.Date;
 import java.util.List;
 import java.util.Random;
@@ -104,16 +105,22 @@ public class PingEvent implements Listener {
         String MOTD = "";
 
         // 1st make sure the key is set
-        if (!this.Plugin.Config.contains(Key))
+        if (!this.Plugin.Config.contains(Key)) {
+
+            this.Plugin.getLogger().info(Key + ": is not defined");
             return MOTD;
+        }
 
         // next get all the results and assign to array
         Set<String> Set = this.Plugin.Config.getConfigurationSection(Key).getKeys(false);
         String[] Array = Set.toArray(new String[Set.size()]);
 
         // make sure array is filled
-        if (Array.length <= 0)
+        if (Array.length <= 0) {
+
+            this.Plugin.getLogger().info(Key + ": Has no random MOTD's defined");
             return MOTD;
+        }
 
         // select a key
         int Random = new Random().nextInt(Array.length);
@@ -131,8 +138,11 @@ public class PingEvent implements Listener {
         String MOTD = "";
 
         // start this one off by making sure the time key exists
-        if (!this.Plugin.Config.contains("motd.earthtime"))
+        if (!this.Plugin.Config.contains("motd.earthtime")) {
+
+            this.Plugin.getLogger().info("The Key motd.earthtime isn't defined, but you are trying to use it.");
             return MOTD;
+        }
 
         // now get current time frame
         String Frame = this.EarthTimeSelect();
@@ -142,8 +152,11 @@ public class PingEvent implements Listener {
             return this.EarthTimeDefault();
 
         // if no mode is set fail
-        if (!this.Plugin.Config.contains(Frame + ".mode"))
+        if (!this.Plugin.Config.contains(Frame + ".mode")) {
+
+            this.Plugin.getLogger().info("The Frame @ " + Frame + " Has no defined mode, using earthtime's default.");
             return this.EarthTimeDefault();
+        }
 
         switch (this.Plugin.Config.getString(Frame + ".mode").toLowerCase()) {
 
@@ -153,10 +166,17 @@ public class PingEvent implements Listener {
         case "static":
             MOTD = this.StaticKey(Frame + ".static");
             break;
+        default:
+            this.Plugin.getLogger().info(
+                    "Error Selecting mode for " + Frame + " Selected " + this.Plugin.Config.getString(Frame + ".mode"));
+            break;
         }
 
-        if (MOTD == "")
+        if (MOTD == "") {
+
+            this.Plugin.getLogger().info("No MOTD was able to be used at frame " + Frame + " Please check your config");
             MOTD = this.EarthTimeDefault();
+        }
 
         return MOTD;
     }
@@ -170,15 +190,22 @@ public class PingEvent implements Listener {
         Set<String> Frames = this.Plugin.Config.getConfigurationSection("motd.earthtime.frames").getKeys(false);
 
         // make sure list isnt empty
-        if (Frames.isEmpty())
+        if (Frames.isEmpty()) {
+
+            this.Plugin.getLogger().info("You Selected EarthTime MOTD but did not include any frames.");
             return Key;
+        }
 
         for (String Value : Frames) {
 
             // make sure both time values are set
             if (!this.Plugin.Config.contains("motd.earthtime.frames." + Value + ".from")
-                    && !this.Plugin.Config.contains("motd.earthtime.frames." + Value + ".till"))
+                    && !this.Plugin.Config.contains("motd.earthtime.frames." + Value + ".till")) {
+
+                this.Plugin.getLogger()
+                        .info("motd.earthtime.frames." + Value + " is not setup correctly, skipping it.");
                 return Key;
+            }
 
             // next do the time compares
             String TimeFrom = this.Plugin.Config.getString("motd.earthtime.frames." + Value + ".from");
@@ -221,30 +248,33 @@ public class PingEvent implements Listener {
 
             SimpleDateFormat Format = new SimpleDateFormat("HH:mm");
             Date FrameTime = Format.parse(Time);
-            Date TimeNow = new Date();
+            int Hour = ZonedDateTime.now().getHour();
+            int Minute = ZonedDateTime.now().getMinute();
+            Date TimeNow = Format.parse(Hour + ":" + Minute);
 
             // if greater, see if time is after
-            if (Greater == true) {
+            if (Greater) {
 
-                if (FrameTime.after(TimeNow)) {
+                if (TimeNow.after(FrameTime)) {
 
                     return true;
-                } else if (FrameTime.equals(TimeNow)) {
+                } else if (TimeNow.equals(FrameTime)) {
 
                     return true;
                 }
             } else { // assume greater is false, run before
 
-                if (FrameTime.before(TimeNow)) {
+                if (TimeNow.before(FrameTime)) {
 
                     return true;
-                } else if (FrameTime.equals(TimeNow)) {
+                } else if (TimeNow.equals(FrameTime)) {
 
                     return true;
                 }
             }
         } catch (ParseException e) {
 
+            this.Plugin.getLogger().info(e.getMessage());
         }
 
         return false;
@@ -257,7 +287,7 @@ public class PingEvent implements Listener {
 
         for (String Value : Values) {
 
-            MOTD.append(Value + (I == 0 ? "\n" : ""));
+            MOTD.append(this.Plugin.StringFilter(Value) + (I == 0 ? "\n" : ""));
             I++;
 
             // dont allow more then 2 lines cause... well ya

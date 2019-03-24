@@ -29,7 +29,7 @@ motd:
         mode: random
         from: "12:00"
         till: "23:59"
-        rnadom:
+        random:
           rnd1:
             - its currently between 12pm and 12am!
             - Server time is {EARTH_TIME}
