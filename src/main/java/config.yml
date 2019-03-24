@@ -1,0 +1,13 @@
+motd:
+  mode: random #modes: random, static
+  static: 
+    - this is a static
+    - option for MOTD
+  rnd1:
+    - Hi Im this servers
+    - MOTD
+  rnd2:
+    - so am i
+  rnd3:
+    - 
+    - and me aswell!
