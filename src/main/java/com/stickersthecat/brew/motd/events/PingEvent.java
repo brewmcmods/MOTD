@@ -36,25 +36,17 @@ public class PingEvent implements Listener {
 
         String MOTD = "";
 
-        if (!this.Plugin.Config.contains("motd.mode")) {
-
+        // if this doesnt exist; exit
+        if (!this.Plugin.Config.contains("motd.mode"))
             return;
-        }
 
         switch (this.Plugin.Config.getString("motd.mode")) {
 
-        case "random":
-            if (!this.Plugin.Config.contains("motd.random")) {
-
-                MOTD = this.SelectMOTD();
-            }
-            break;
-
         case "static":
-            if (!this.Plugin.Config.contains("motd.static")) {
-
-                MOTD = this.BuildMOTD(this.Plugin.Config.getStringList("motd.static"));
-            }
+            MOTD = this.StaticMOTD();
+            break;
+        case "random":
+            MOTD = this.RandomMOTD();
             break;
         default:
             break;
@@ -73,18 +65,69 @@ public class PingEvent implements Listener {
         }
     }
 
-    public String SelectMOTD() {
+    private String StaticMOTD() {
 
-        Set<String> Set = this.Plugin.Config.getConfigurationSection("motd.random").getKeys(false);
-        String[] Arr = Set.toArray(new String[Set.size()]);
+        return this.StaticKey("motd.static");
+    }
 
-        int Random = new Random().nextInt(Arr.length);
+    /**
+     * Root Level random MOTD
+     */
+    private String RandomMOTD() {
+
+        return this.RandomKey("motd.random");
+    }
+
+    private String EarthTimeMOTD() {
+
+        return "";
+    }
+
+    /**
+     * so simple it probally doesnt even need its own func... just like 2 of the
+     * MOTD funcs! but it does! so deal with it
+     * 
+     * ... never code while bored kids
+     */
+    private String StaticKey(String Key) {
 
         String MOTD = "";
-        if (this.Plugin.Config.contains("motd.random." + Arr[Random])) {
 
-            MOTD = this.BuildMOTD(this.Plugin.Config.getStringList("motd.random." + Arr[Random]));
-        }
+        // 1st make sure the key is set
+        if (!this.Plugin.Config.contains(Key))
+            return MOTD;
+
+        // now build it
+        return this.BuildMOTD(this.Plugin.Config.getStringList(Key));
+    }
+
+    /**
+     * Use to select random MOTD
+     */
+    private String RandomKey(String Key) {
+
+        String MOTD = "";
+
+        // 1st make sure the key is set
+        if (!this.Plugin.Config.contains(Key))
+            return MOTD;
+
+        // next get all the results and assign to array
+        Set<String> Set = this.Plugin.Config.getConfigurationSection(Key).getKeys(false);
+        String[] Array = Set.toArray(new String[Set.size()]);
+
+        // make sure array is filled
+        if (Array.length <= 0)
+            return MOTD;
+
+        // select a key
+        int Random = new Random().nextInt(Array.length);
+        String Selected = Key + "." + Array[Random];
+
+        // double check to be safe
+        if (this.Plugin.Config.contains(Selected))
+            MOTD = this.BuildMOTD(this.Plugin.Config.getStringList(Selected));
+
         return MOTD;
     }
 
@@ -97,6 +140,10 @@ public class PingEvent implements Listener {
 
             MOTD.append(Value + (I == 0 ? "\n" : ""));
             I++;
+            
+            // dont allow more then 2 lines cause... well ya
+            if (I > 1)
+                break;
         }
 
         return MOTD.toString();
