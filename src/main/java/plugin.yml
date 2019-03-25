@@ -1,5 +1,5 @@
 name: BrewMOTD
-version: 0.3.0
+version: 0.3.1
 author: Stickers The Cat
 main: com.stickersthecat.brew.motd.Main
 api-version: "1.13"
