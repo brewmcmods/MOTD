@@ -26,8 +26,9 @@ public class PingEvent implements Listener {
     @EventHandler
     public void OnPing(ServerListPingEvent Event) {
 
-        // make sure MOTD exists
-        if (this.Plugin.Config.contains("motd"))
+        // make sure MOTD exists and its enabled (using default of true if enabled
+        // doesnt exist)
+        if (this.Plugin.Config.contains("motd") && this.Plugin.Config.getBoolean("motd.enabled"))
             this.MOTD(Event);
     }
 
