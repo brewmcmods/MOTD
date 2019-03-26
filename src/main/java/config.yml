@@ -1,5 +1,5 @@
 motd:
-  enabled: true; # set to false, if you dont want this part of the plugin, deleting falls back to default of... true
+  enabled: true # if you delete this from ur config itll try to use the default, aka true, so set it false
   mode: earthtime # modes: random, static, earthtime
   static: # this is a static / default MOTD, this wont show up unless mode is static or there is an error with one of the other ones
     - this is a static
