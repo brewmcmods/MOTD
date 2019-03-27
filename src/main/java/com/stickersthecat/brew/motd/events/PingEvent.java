@@ -28,7 +28,7 @@ public class PingEvent implements Listener {
 
         // make sure MOTD exists and its enabled (using default of true if enabled
         // doesnt exist)
-        if (this.Plugin.Config.contains("motd", true) && this.Plugin.Config.getBoolean("motd.enabled", true)) this.MOTD(Event);
+        if (this.Plugin.Config.contains("motd", true) && this.Plugin.Config.getBoolean("motd.enabled", false)) this.MOTD(Event);
     }
 
     public void MOTD(ServerListPingEvent Event) {
@@ -36,7 +36,7 @@ public class PingEvent implements Listener {
         String MOTD = "";
 
         // if this doesnt exist; exit
-        if (!this.Plugin.Config.contains("motd.mode")) return;
+        if (!this.Plugin.Config.contains("motd.mode", true)) return;
 
         switch (this.Plugin.Config.getString("motd.mode").toLowerCase()) {
 
@@ -61,7 +61,7 @@ public class PingEvent implements Listener {
         }
 
         // check it again and if this fails allow it to default to the server prop one
-        if (MOTD != "") {
+        if (MOTD.trim() != "") {
 
             Event.setMotd(MOTD);
         } else {
@@ -114,7 +114,7 @@ public class PingEvent implements Listener {
         String MOTD = "";
 
         // 1st make sure the key is set
-        if (!this.Plugin.Config.contains(Key)) {
+        if (!this.Plugin.Config.contains(Key, true)) {
 
             this.Plugin.getLogger().info(Key + ": is not defined but is the selected key for the MOTD.");
             return MOTD;
@@ -127,7 +127,7 @@ public class PingEvent implements Listener {
         // make sure array is filled
         if (Array.length <= 0) {
 
-            this.Plugin.getLogger().info(Key + ": Has no random MOTD's defined.");
+            this.Plugin.getLogger().info(Key + ": Has no MOTD's defined to be used.");
             return MOTD;
         }
 
@@ -286,12 +286,13 @@ public class PingEvent implements Listener {
 
     public String BuildMOTD(List<String> Values) {
 
-        StringBuilder MOTD = new StringBuilder();
+        String MOTD = "";
         int I = 0;
 
         for (String Value : Values) {
 
-            MOTD.append(this.Plugin.StringFilter(Value) + (I == 0 ? "\n" : ""));
+            this.Plugin.getLogger().info("test");
+            MOTD += this.Plugin.StringFilter(Value) + (I == 0 ? "\n" : "");
             I++;
 
             // dont allow more then 2 lines cause... well ya
