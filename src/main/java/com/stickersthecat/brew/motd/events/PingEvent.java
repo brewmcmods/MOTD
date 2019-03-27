@@ -28,8 +28,7 @@ public class PingEvent implements Listener {
 
         // make sure MOTD exists and its enabled (using default of true if enabled
         // doesnt exist)
-        if (this.Plugin.Config.contains("motd") && this.Plugin.Config.getBoolean("motd.enabled"))
-            this.MOTD(Event);
+        if (this.Plugin.Config.contains("motd", true) && this.Plugin.Config.getBoolean("motd.enabled", true)) this.MOTD(Event);
     }
 
     public void MOTD(ServerListPingEvent Event) {
@@ -37,8 +36,7 @@ public class PingEvent implements Listener {
         String MOTD = "";
 
         // if this doesnt exist; exit
-        if (!this.Plugin.Config.contains("motd.mode"))
-            return;
+        if (!this.Plugin.Config.contains("motd.mode")) return;
 
         switch (this.Plugin.Config.getString("motd.mode").toLowerCase()) {
 
@@ -56,12 +54,20 @@ public class PingEvent implements Listener {
         }
 
         // if fail use static
-        if (MOTD == "" && this.Plugin.Config.contains("motd.static"))
-            MOTD = this.BuildMOTD(this.Plugin.Config.getStringList("motd.static"));
+        if (MOTD == "" && this.Plugin.Config.contains("motd.static", true)) {
+
+            this.Plugin.getLogger().info("Something want wrong selecting a MOTD, attempting to fall back to the static MOTD"); // error: major failure
+            MOTD = this.StaticMOTD();
+        }
 
         // check it again and if this fails allow it to default to the server prop one
-        if (MOTD != "")
+        if (MOTD != "") {
+
             Event.setMotd(MOTD);
+        } else {
+
+            this.Plugin.getLogger().info("Something want really wrong, using MOTD defined by server.properties"); // error: really major failure
+        }
     }
 
     /**
@@ -83,9 +89,11 @@ public class PingEvent implements Listener {
         String MOTD = "";
 
         // 1st make sure the key is set
-        if (!this.Plugin.Config.contains(Key))
-            return MOTD;
+        if (!this.Plugin.Config.contains(Key, true)) {
 
+            this.Plugin.getLogger().info(Key + ": is not defined but was selected for use as the MOTD."); // error: static key not defined
+            return MOTD;
+        }
         // now build it
         return this.BuildMOTD(this.Plugin.Config.getStringList(Key));
     }
@@ -108,7 +116,7 @@ public class PingEvent implements Listener {
         // 1st make sure the key is set
         if (!this.Plugin.Config.contains(Key)) {
 
-            this.Plugin.getLogger().info(Key + ": is not defined");
+            this.Plugin.getLogger().info(Key + ": is not defined but is the selected key for the MOTD.");
             return MOTD;
         }
 
@@ -119,7 +127,7 @@ public class PingEvent implements Listener {
         // make sure array is filled
         if (Array.length <= 0) {
 
-            this.Plugin.getLogger().info(Key + ": Has no random MOTD's defined");
+            this.Plugin.getLogger().info(Key + ": Has no random MOTD's defined.");
             return MOTD;
         }
 
@@ -128,8 +136,7 @@ public class PingEvent implements Listener {
         String Selected = Key + "." + Array[Random];
 
         // double check to be safe
-        if (this.Plugin.Config.contains(Selected))
-            MOTD = this.BuildMOTD(this.Plugin.Config.getStringList(Selected));
+        if (this.Plugin.Config.contains(Selected)) MOTD = this.BuildMOTD(this.Plugin.Config.getStringList(Selected));
 
         return MOTD;
     }
@@ -149,8 +156,7 @@ public class PingEvent implements Listener {
         String Frame = this.EarthTimeSelect();
 
         // if empty fail
-        if (Frame == "")
-            return this.EarthTimeDefault();
+        if (Frame == "") return this.EarthTimeDefault();
 
         // if no mode is set fail
         if (!this.Plugin.Config.contains(Frame + ".mode")) {
@@ -168,8 +174,7 @@ public class PingEvent implements Listener {
             MOTD = this.StaticKey(Frame + ".static");
             break;
         default:
-            this.Plugin.getLogger().info(
-                    "Error Selecting mode for " + Frame + " Selected " + this.Plugin.Config.getString(Frame + ".mode"));
+            this.Plugin.getLogger().info("Error Selecting mode for " + Frame + " Selected " + this.Plugin.Config.getString(Frame + ".mode"));
             break;
         }
 
@@ -203,8 +208,7 @@ public class PingEvent implements Listener {
             if (!this.Plugin.Config.contains("motd.earthtime.frames." + Value + ".from")
                     && !this.Plugin.Config.contains("motd.earthtime.frames." + Value + ".till")) {
 
-                this.Plugin.getLogger()
-                        .info("motd.earthtime.frames." + Value + " is not setup correctly, skipping it.");
+                this.Plugin.getLogger().info("motd.earthtime.frames." + Value + " is not setup correctly, skipping it.");
                 return Key;
             }
 
@@ -227,8 +231,7 @@ public class PingEvent implements Listener {
         String MOTD = "";
 
         // make sure exists
-        if (this.Plugin.Config.contains("motd.earthtime.default"))
-            return MOTD;
+        if (this.Plugin.Config.contains("motd.earthtime.default")) return MOTD;
 
         switch (this.Plugin.Config.getString("motd.earthtime.default").toLowerCase()) {
 
@@ -292,8 +295,7 @@ public class PingEvent implements Listener {
             I++;
 
             // dont allow more then 2 lines cause... well ya
-            if (I > 1)
-                break;
+            if (I > 1) break;
         }
 
         return MOTD.toString();
