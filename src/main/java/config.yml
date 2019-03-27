@@ -1,7 +1,13 @@
 motd:
   enabled: true
   mode: earthtime # modes: random, static, earthtime
-  static: # this is a static / default MOTD, this wont show up unless mode is static or there is an error with one of the other ones
+  #################################################
+  # this is your static & default MOTD key,       #
+  # you should always change it even if you dont  #
+  # use it as the plugin will try to use it if    #
+  # something goes very wrong with the other ones # 
+  #################################################
+  static:
     - this is a static
     - option for MOTD
   random: # the group for the random motd msgs
@@ -17,7 +23,7 @@ motd:
       - §eNow with more yellow
       - §a§nand§r §b§msome§r §9§lbold
   earthtime: # this is based on server timezone (NOT WORLD)
-    default: random # if all times keys are passed and none meet the current time, fall back to static or random motds, defined above
+    default: motd.random #if the current time to not defined, this allows you to select to use motd.random, or motd.static, or even allows you to define ur own key for a fall back
     frames:
       time1:
         mode: static # static is a single motd for this time frame
